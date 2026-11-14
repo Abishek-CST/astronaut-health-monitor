@@ -441,7 +441,7 @@ export const App: React.FC = () => {
       {/* Footer */}
       <footer className="mt-auto border-t border-slate-800/80 bg-slate-950 px-4 lg:px-8 py-4 text-xs font-mono text-slate-500 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <span className="text-slate-400">Astronaut Health Monitor</span> • NASA Space Apps Challenge 2026 Prototype
+          <span className="text-slate-300 font-bold">Astronaut Health Guardian</span> • NASA Space Apps Challenge 2026 Prototype
         </div>
         <div className="text-amber-400/80 text-[11px]">
           SIMULATED DATA DEMONSTRATION • NOT A CLINICAL MEDICAL DEVICE • NO REAL HEALTH RECORDS

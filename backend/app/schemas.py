@@ -1,6 +1,5 @@
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field
-from datetime import datetime
 
 class SubjectBase(BaseModel):
     id: str
@@ -14,11 +13,14 @@ class SubjectBase(BaseModel):
 class ObservationCreate(BaseModel):
     subject_id: str
     measurement_type: str
+    domain: Optional[str] = "cardiovascular"
     value_numeric: float
     value_text: Optional[str] = None
     unit: str
     observed_at: str
-    source: str = "bio_harness_telemetry"
+    source_type: str = "synthetic_demo"
+    source_name: str = "Bio-Harness Telemetry Simulator"
+    dataset_id: Optional[str] = None
     is_simulated: bool = True
     created_by: Optional[str] = "crew_member"
     client_operation_id: Optional[str] = None
@@ -34,6 +36,12 @@ class ReviewFlagOut(BaseModel):
     subject_id: str
     rule_code: str
     severity: str
+    domain: Optional[str] = "cardiovascular"
+    what_changed: str
+    baseline_reference: str
+    period_considered: str
+    flag_reason: str
+    action_to_review: str
     reason: str
     created_at: str
     acknowledged_by: Optional[str] = None
@@ -71,3 +79,12 @@ class AuditEventOut(BaseModel):
     request_id: Optional[str] = None
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
+class NasaResourceOut(BaseModel):
+    id: str
+    resource_name: str
+    resource_url: str
+    dataset_id: Optional[str] = None
+    source_type: str = "nasa"
+    domain: str
+    description: str
+    application_usage: str

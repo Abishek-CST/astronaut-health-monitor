@@ -7,10 +7,13 @@ import {
   ShieldAlert, 
   Info, 
   User, 
-  FileText, 
   Check, 
   Filter,
-  HelpCircle
+  HelpCircle,
+  Activity,
+  FileSearch,
+  CheckCircle2,
+  Stethoscope
 } from 'lucide-react';
 
 interface ReviewFlagsSectionProps {
@@ -92,14 +95,14 @@ export const ReviewFlagsSection: React.FC<ReviewFlagsSectionProps> = ({
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold text-white flex items-center gap-2">
               <ShieldAlert className="w-5 h-5 text-amber-400" />
-              Transparent Review Flags & Decision Support Engine
+              Explainable Review Flags & Decision Support Engine
             </h2>
             <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300">
               NOT A MEDICAL DIAGNOSIS
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Deterministic rule-based anomaly flagging with human-in-the-loop review workflow.
+            Deterministic rules + personal trends. Every flag transparently details what changed, baseline reference, time period, rationale, and review recommendations.
           </p>
         </div>
 
@@ -153,7 +156,7 @@ export const ReviewFlagsSection: React.FC<ReviewFlagsSectionProps> = ({
       )}
 
       {/* Flags List */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {filteredFlags.length === 0 ? (
           <div className="p-8 text-center bg-slate-900/40 border border-slate-800 rounded-xl text-slate-400">
             <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
@@ -175,7 +178,7 @@ export const ReviewFlagsSection: React.FC<ReviewFlagsSectionProps> = ({
                 }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="space-y-1.5 max-w-2xl">
+                  <div className="space-y-2 max-w-3xl">
                     <div className="flex items-center flex-wrap gap-2">
                       <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${getSeverityBadge(flag.severity)}`}>
                         {flag.severity} PRIORITY
@@ -193,20 +196,74 @@ export const ReviewFlagsSection: React.FC<ReviewFlagsSectionProps> = ({
                       </span>
                     </div>
 
-                    {/* Rationale Text */}
-                    <p className="text-sm text-slate-200 font-medium">
+                    {/* Summary headline */}
+                    <p className="text-sm text-slate-100 font-bold">
                       {flag.reason}
                     </p>
 
+                    {/* 5-Point Explainability Breakdown */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 text-xs">
+                      {/* 1. What changed */}
+                      <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
+                        <span className="text-[10px] uppercase font-mono tracking-wider text-rose-400 font-bold block mb-0.5">
+                          1. What Changed
+                        </span>
+                        <span className="text-slate-300">
+                          {flag.what_changed || flag.reason}
+                        </span>
+                      </div>
+
+                      {/* 2. Baseline / Reference */}
+                      <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
+                        <span className="text-[10px] uppercase font-mono tracking-wider text-cyan-400 font-bold block mb-0.5">
+                          2. Baseline / Reference Used
+                        </span>
+                        <span className="text-slate-300">
+                          {flag.baseline_reference || "Personal 30-day rolling baseline"}
+                        </span>
+                      </div>
+
+                      {/* 3. Period Considered */}
+                      <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
+                        <span className="text-[10px] uppercase font-mono tracking-wider text-amber-400 font-bold block mb-0.5">
+                          3. Period Considered
+                        </span>
+                        <span className="text-slate-300">
+                          {flag.period_considered || "Rolling telemetry window"}
+                        </span>
+                      </div>
+
+                      {/* 4. Why Flagged */}
+                      <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
+                        <span className="text-[10px] uppercase font-mono tracking-wider text-purple-400 font-bold block mb-0.5">
+                          4. Why Flagged
+                        </span>
+                        <span className="text-slate-300">
+                          {flag.flag_reason || "Deterministic threshold crossed"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 5. What User Should Review */}
+                    <div className="p-2.5 rounded-lg bg-emerald-950/20 border border-emerald-800/40 text-xs">
+                      <span className="text-[10px] uppercase font-mono tracking-wider text-emerald-400 font-bold block mb-0.5 flex items-center gap-1">
+                        <Stethoscope className="w-3.5 h-3.5" />
+                        5. Recommended Review Action
+                      </span>
+                      <span className="text-emerald-200">
+                        {flag.action_to_review || "Flight Surgeon evaluation suggested. Check sensor contact and mission activity context."}
+                      </span>
+                    </div>
+
                     {/* Timestamp & Disclaimer */}
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 font-mono pt-1">
+                    <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 font-mono pt-1">
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         Triggered: {new Date(flag.created_at).toLocaleString()}
                       </span>
                       <span>•</span>
                       <span className="text-amber-400/80">
-                        Educational Decision Support — Requires Human Validation
+                        Decision Support Only — Does Not Diagnose Disease
                       </span>
                     </div>
                   </div>
@@ -229,7 +286,7 @@ export const ReviewFlagsSection: React.FC<ReviewFlagsSectionProps> = ({
                         disabled={!canAcknowledge}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
                           canAcknowledge
-                            ? 'bg-amber-500/15 border-amber-500/40 text-amber-300 hover:bg-amber-500/30 cursor-pointer'
+                            ? 'bg-amber-500/15 border-amber-500/40 text-amber-300 hover:bg-amber-500/30 cursor-pointer shadow-md shadow-amber-500/10'
                             : 'bg-slate-800 border-slate-700 text-slate-500 cursor-not-allowed'
                         }`}
                         title={canAcknowledge ? "Acknowledge this review flag" : "Requires Flight Surgeon role"}
@@ -243,8 +300,8 @@ export const ReviewFlagsSection: React.FC<ReviewFlagsSectionProps> = ({
 
                 {/* Acknowledged Notes if available */}
                 {flag.notes && (
-                  <div className="mt-3 pt-2.5 border-t border-slate-800 text-xs bg-slate-950/70 p-2 rounded-lg font-mono text-slate-300">
-                    <strong className="text-cyan-400">Reviewer Note:</strong> {flag.notes}
+                  <div className="mt-3 pt-2.5 border-t border-slate-800 text-xs bg-slate-950/70 p-2.5 rounded-lg font-mono text-slate-300">
+                    <strong className="text-cyan-400">Flight Surgeon Notes:</strong> {flag.notes}
                   </div>
                 )}
               </div>
@@ -271,7 +328,7 @@ export const ReviewFlagsSection: React.FC<ReviewFlagsSectionProps> = ({
             </div>
 
             <p className="text-xs text-slate-300">
-              Confirming this flag logs your flight surgeon credentials and records an immutable audit event.
+              Confirming this flag logs your flight surgeon role credentials and records an immutable entry into the audit trail.
             </p>
 
             <div>
@@ -282,7 +339,7 @@ export const ReviewFlagsSection: React.FC<ReviewFlagsSectionProps> = ({
                 rows={3}
                 value={ackNote}
                 onChange={(e) => setAckNote(e.target.value)}
-                placeholder="e.g. Discussed with astronaut; fluid intake increased; vitals stabilizing..."
+                placeholder="e.g. Consulted with commander; sensor recalibrated; subsequent observation nominal."
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-400"
               />
             </div>
@@ -336,10 +393,15 @@ export const ReviewFlagsSection: React.FC<ReviewFlagsSectionProps> = ({
                   <div>Low Threshold: <strong className="text-blue-400">&lt; {selectedRuleInfo.threshold_low} {selectedRuleInfo.unit}</strong></div>
                 )}
                 <div>Assigned Severity: <strong className="text-white">{selectedRuleInfo.severity}</strong></div>
+                {selectedRuleInfo.nasa_context && (
+                  <div className="pt-1 text-cyan-300 text-[11px]">
+                    NASA Context: {selectedRuleInfo.nasa_context}
+                  </div>
+                )}
               </div>
 
               <div className="text-amber-400/90 text-[11px] font-sans italic">
-                Rule logic is fully deterministic, version-controlled, and audited per AI_ML_PLAN.md specifications.
+                Rule logic is fully deterministic, transparent, and non-diagnostic per NASA Space Apps requirements.
               </div>
             </div>
 
@@ -357,4 +419,3 @@ export const ReviewFlagsSection: React.FC<ReviewFlagsSectionProps> = ({
     </div>
   );
 };
-

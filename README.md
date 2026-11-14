@@ -1,115 +1,150 @@
-# Astronaut Health Monitor
+# Astronaut Health Guardian
 
-An offline-first prototype for monitoring astronaut health indicators during space missions, with a possible Earth-based use case for remote research stations and field teams.
+**NASA Space Apps Challenge 2026 Prototype**  
+*AI-Assisted, Offline-First Health Monitoring & Decision Support for Long-Duration Space Missions*
 
-> **Prototype and safety notice:** This project is for education and demonstration. It is not a medical device, does not diagnose conditions, and must not be used to make real medical decisions. Demo measurements should be clearly labelled as simulated unless collected from an authorized, validated source.
+Live Production URL: **`https://astronaut-health-monitor-abisheks-projects-c3441485.vercel.app`**  
+Local Hosting URL: **`http://127.0.0.1:8000`**
 
-## Problem
+---
 
-During long-duration missions, crews may need to review health observations when connectivity is limited. A useful monitoring interface should preserve records locally, show trends, identify data that may deserve review, and explain its alerts.
+> [!IMPORTANT]
+> **Safety and Non-Clinical Notice:**  
+> This project is a monitoring and decision-support prototype developed for education and research demonstration. It is **not a medical device**, does not diagnose disease or medical conditions, and does not replace certified flight surgeons or validated clinical procedures. All telemetry measurements displayed in the prototype are **SIMULATED / DEMO DATA** unless a specific authorized NASA sensor stream is directly loaded.
 
-## Proposed solution
+---
 
-A responsive web application that:
-- Displays astronaut profiles and health observations.
-- Visualizes measurements over time.
-- Flags unusual values or changes using transparent, configurable rules and an experimental anomaly-detection component.
-- Supports limited offline operation and synchronization when connectivity returns.
-- Applies access controls and records important actions.
-- Demonstrates possible Earth applications in remote or isolated environments.
+## 1. Problem Statement
+Long-duration exploration missions (such as Deep Space Gateway and Mars transit) expose astronauts to:
+- Space radiation and galactic cosmic rays (GCR)
+- Microgravity and altered gravity bone/physical deconditioning
+- Isolation, confinement, and circadian desynchrony
+- Cardiovascular strain and fluid shifts
+- Closed habitat atmospheric shifts (e.g., carbon dioxide accumulation)
+- Intermittent communications blackouts (Loss-of-Signal / comms latency)
 
-## Technology stack
+---
 
-- **Frontend:** React, TypeScript, Tailwind CSS
-- **Backend API:** Python, FastAPI
-- **Database:** PostgreSQL
-- **Offline storage:** Service Worker and IndexedDB
-- **Data analysis:** Python, pandas, scikit-learn (optional)
-- **Testing:** pytest and frontend tests
-- **Version control:** Git and GitHub
-- **Packaging:** Docker (optional for the first prototype)
+## 2. Solution: Astronaut Health Guardian
+Astronaut Health Guardian provides an offline-first PWA and deterministic decision-support engine that:
+1. **Monitors 8 Core Health Domains:**
+   - **Cardiovascular Health:** Heart rate, pulse oximetry ($SpO_2$), blood pressure
+   - **Bone and Physical Health:** Grounded in NASA OSDR OSD-919 microgravity bone resorption research
+   - **Behavioral Health and Wellbeing:** Sleep architecture, actigraphy, and autonomic stress indices with role-based privacy controls
+   - **Radiation Exposure / Context:** Active cabin flux and cumulative dosimeter tracking grounded in NASA Environmental Data App (EDA)
+   - **Environmental Conditions:** Cabin $CO_2$ partial pressure, temperature, and humidity grounded in NASA EDA
+   - **Isolation and Confinement:** Mission elapsed time (MET), confinement days, and circadian alignment
+   - **Altered Gravity / Microgravity:** Neuro-vestibular G-adaptation indices
+   - **Immune and Physiological Indicators:** Grounded in NASA OSDR OSD-918 blood and immune status studies
+2. **Personal Baselines & Trend Analysis:**
+   - Visualizes moving averages, normal safety bands, and circadian variations.
+3. **5-Dimension Explainable Review Flags:**
+   - Every flag transparently details:
+     1. *What changed*
+     2. *Baseline/reference used*
+     3. *Period considered*
+     4. *Why flagged*
+     5. *Action to review*
+   - Flight Surgeon human-in-the-loop acknowledgment workflow with immutable audit logging.
+4. **Offline-First PWA & Idempotent Synchronization:**
+   - Full telemetry viewing and logging during Loss-of-Signal (LOS).
+   - Client UUID generation prevents duplicate records on reconnection.
 
-Choose stable, mutually compatible versions when implementing; document exact versions in the project manifests.
+---
 
-## Architecture overview
+## 3. NASA Data & Resources Integration
 
-1. React renders the dashboard and captures user actions.
-2. The PWA caches application assets and stores selected pending records locally.
-3. FastAPI validates requests, enforces authorization, and runs application logic.
-4. PostgreSQL stores authorized records and audit events.
-5. A Python analysis module can generate explainable review flags from suitable data.
+| NASA Resource | Exact URL | Dataset / Scope | How It Is Used in the Project |
+|---|---|---|---|
+| **NASA Open Science Data Repository (OSDR)** | [https://osdr.nasa.gov/bio/repo/](https://osdr.nasa.gov/bio/repo/) | Core Repository | Grounds health monitoring domains and deep-space biological research context. |
+| **NASA OSDR Visualization Portal** | [https://visualization.osdr.nasa.gov/](https://visualization.osdr.nasa.gov/) | Visualization Portal | Informs time-series chart design, multi-metric cross-comparisons, and safety band limits. |
+| **NASA Environmental Data App (EDA)** | [https://visualization.osdr.nasa.gov/eda/](https://visualization.osdr.nasa.gov/eda/) | `EDA-ISS` | Telemetry reference for Cabin $CO_2$, relative humidity, and active radiation dosimeter flux. |
+| **NASA OSDR OSD-919** | [https://osdr.nasa.gov/bio/repo/data/studies/OSD-919](https://osdr.nasa.gov/bio/repo/data/studies/OSD-919) | `OSD-919` | Scientific baseline for spaceflight bone deconditioning and collagen turnover ($NTx$ biomarker). |
+| **NASA OSDR OSD-918** | [https://osdr.nasa.gov/bio/repo/data/studies/OSD-918](https://osdr.nasa.gov/bio/repo/data/studies/OSD-918) | `OSD-918` | Scientific context for spaceflight immune dysregulation and cytokine expression under stress. |
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) and [OFFLINE_SYNC.md](OFFLINE_SYNC.md).
+---
 
-## Repository layout
+## 4. Super Intelligence (SI) Usage Disclosure
+Large language model (ChatGPT / Claude / Gemini) assistance was used during project development for:
+- Project ideation and requirement refinement based on NASA challenge specifications
+- Architectural diagrams and markdown specification blueprints
+- Python FastAPI REST API and React PWA component scaffolding
+- Deterministic rule parameterization and test assertions
+
+**Developer Ownership & Verification:** The developer reviewed, selected, modified, integrated, tested, and demonstrated the resulting code and user interface.  
+**Branding Compliance:** No AI-generated asset contains, modifies, or imitates NASA logos, the NASA worm/meatball insignia, national flags, mission patches, or federal identifiers.
+
+---
+
+## 5. Technology Architecture
 
 ```text
-astronaut-health-monitor/
-├── README.md
-├── PROJECT_PLAN.md
-├── REQUIREMENTS.md
-├── ARCHITECTURE.md
-├── DATABASE.md
-├── AI_ML_PLAN.md
-├── OFFLINE_SYNC.md
-├── SECURITY.md
-├── TESTING.md
-├── SUBMISSION.md
-├── .gitignore
-├── .env.example
-├── frontend/
-├── backend/
-├── ml/
-├── database/
-├── tests/
-└── docs/images/
+NASA OSDR / NASA Resources (OSD-919, OSD-918, EDA)
+          |
+          v
+NASA Data / Reference Layer
+          |
+     +----+----+
+     |         |
+     v         v
+NASA-derived  Synthetic demo
+/context data data (is_simulated: true)
+     |         |
+     +----+----+
+          |
+          v
+   React 19 + TypeScript + Tailwind CSS Frontend PWA
+          |
+   Astronaut Health Guardian HUD & Dashboard
+          |
+ +--------+--------+
+ |        |        |
+ v        v        v
+Personal  Trend    Explainable
+Baseline  Analysis Review Flags
+          |
+    Offline Storage (IndexedDB / Service Worker)
+          |
+      Sync Queue (Client UUID Idempotency Keys)
+          |
+       FastAPI Telemetry Backend
+          |
+     PostgreSQL / Append-Only Ingestion
 ```
 
-## Getting started
+---
 
-The full-stack application is generated, tested, and ready to run.
+## 6. Getting Started
 
-### Quick Start (Single Command Hosting)
-To host both the FastAPI REST API and the compiled React PWA frontend on port 8000:
+### Local Hosting (FastAPI + React PWA on Port 8000)
 ```bash
 python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
-Then navigate to: **`http://127.0.0.1:8000`** in your browser.
+Open **`http://127.0.0.1:8000`** in your browser.
 
-### Development Mode
-To run Vite with hot-module replacement (HMR) and live proxying to the FastAPI backend:
-1. Start the backend:
-   ```bash
-   python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
-   ```
-2. In a separate terminal, start the frontend:
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-   Open `http://localhost:5173`.
-
-### Running Automated Tests
+### Development Mode (Vite HMR)
 ```bash
-python -c "import tests.test_api_and_rules as t; t.test_transparent_review_rules(); t.test_idempotency_and_duplicate_prevention(); t.test_flag_acknowledgment(); print('ALL TESTS PASSED SUCCESSFULLY!')"
+# Terminal 1: Backend
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+
+# Terminal 2: Frontend
+cd frontend
+npm run dev
 ```
 
-## Demo data
+### Running Test Suite
+```bash
+python -m tests.test_api_and_rules
+```
 
-Use synthetic data generated specifically for the demo. Label it **SIMULATED DATA** in the interface, charts, screenshots, and presentation. Do not imply that the sample data comes from NASA or actual astronauts unless that is true and authorized.
+---
 
-## Project status
-
-- [x] Confirm the official challenge brief and map requirements to it.
-- [x] Build the dashboard MVP.
-- [x] Implement API and persistent storage.
-- [x] Implement offline read/write queue and synchronization.
-- [x] Add transparent review flags.
-- [x] Add authentication and authorization.
-- [x] Run tests and security checks.
-- [x] Host live website locally on port 8000.
-- [ ] Record demo and prepare final submission.
-
-## License and attribution
-
-Choose a license before public release. Attribute any datasets, libraries, icons, and other assets according to their licenses and the official challenge rules.
+## 7. Submission Checklist Verification
+- [x] NASA resources entered and cited with live URLs
+- [x] NASA-derived vs. simulated data clearly distinguished
+- [x] Super Intelligence (SI) usage disclosed
+- [x] No NASA branding generated or modified by AI tools
+- [x] All 8 health domains represented
+- [x] 5-dimension explainable review flags implemented
+- [x] Offline operation and idempotent sync verified
+- [x] Live production URL deployed on Vercel

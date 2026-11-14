@@ -1,6 +1,7 @@
 """
 In-Memory Storage & Synthetic Data Seed Layer
 Adheres to DATABASE.md entities and provides thread-safe access.
+Includes full NASA OSDR & Environmental Data App provenance records.
 """
 
 import uuid
@@ -8,53 +9,109 @@ from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Any, Optional
 import random
 
+NASA_RESOURCES_DATA = [
+    {
+        "id": "nasa-osdr",
+        "resource_name": "NASA Open Science Data Repository (OSDR)",
+        "resource_url": "https://osdr.nasa.gov/bio/repo/",
+        "dataset_id": None,
+        "source_type": "nasa",
+        "domain": "Spaceflight Multi-Omics & Biology",
+        "description": "Primary repository for space biology, model organism, and crew flight research data.",
+        "application_usage": "Establishes baseline domains and research context for crew health monitoring."
+    },
+    {
+        "id": "nasa-osdr-viz",
+        "resource_name": "NASA OSDR Visualization Portal",
+        "resource_url": "https://visualization.osdr.nasa.gov/",
+        "dataset_id": None,
+        "source_type": "nasa",
+        "domain": "Interactive Space Life Science Data",
+        "description": "Interactive tools and analytical pipelines for spaceflight physiological metrics.",
+        "application_usage": "Informs chart design, multi-metric cross-comparison, and baseline thresholds."
+    },
+    {
+        "id": "nasa-eda",
+        "resource_name": "NASA Environmental Data App (EDA)",
+        "resource_url": "https://visualization.osdr.nasa.gov/eda/",
+        "dataset_id": "EDA-ISS",
+        "source_type": "nasa",
+        "domain": "ISS Environmental Telemetry & Radiation",
+        "description": "Real-time & historical cabin environmental parameters: CO2, humidity, temp, and radiation.",
+        "application_usage": "Direct reference for Environmental Conditions and Radiation Exposure domains."
+    },
+    {
+        "id": "nasa-osd-919",
+        "resource_name": "NASA OSDR OSD-919",
+        "resource_url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-919",
+        "dataset_id": "OSD-919",
+        "source_type": "nasa",
+        "domain": "Bone & Physical Health in Microgravity",
+        "description": "Spaceflight-induced bone density alteration, collagen degradation, and remodeling biomarkers.",
+        "application_usage": "Scientific grounding for Bone and Physical Health markers (NTx bone resorption)."
+    },
+    {
+        "id": "nasa-osd-918",
+        "resource_name": "NASA OSDR OSD-918",
+        "resource_url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-918",
+        "dataset_id": "OSD-918",
+        "source_type": "nasa",
+        "domain": "Blood, Immune & Physiological Status",
+        "description": "Hematologic shifts, immune dysregulation, and cytokine expression under mission stress.",
+        "application_usage": "Scientific context for the Immune and Physiological Indicator domain."
+    }
+]
+
 class DataStore:
     def __init__(self):
         self.subjects: Dict[str, Dict[str, Any]] = {}
         self.observations: List[Dict[str, Any]] = []
         self.review_flags: List[Dict[str, Any]] = []
         self.audit_events: List[Dict[str, Any]] = []
+        self.nasa_resources: List[Dict[str, Any]] = NASA_RESOURCES_DATA
         self.client_operation_ids: set = set()
         self._seed_initial_data()
 
     def _seed_initial_data(self):
+        now = datetime.now(timezone.utc)
+
         # 1. Seed Subjects
         crew_definitions = [
             {
                 "id": "c1-elena-rostova",
                 "display_label": "Commander Elena Rostova",
-                "role": "Mission Commander",
-                "mission_phase": "Ares-IV Transit (Sol 142)",
+                "role": "Mission Commander (Expedition-74)",
+                "mission_phase": "Deep Space Gateway Transit (Sol 142)",
                 "avatar_initials": "ER",
                 "is_simulated": True,
-                "created_at": (datetime.now(timezone.utc) - timedelta(days=150)).isoformat()
+                "created_at": (now - timedelta(days=150)).isoformat()
             },
             {
                 "id": "c2-alex-chen",
                 "display_label": "Dr. Alex Chen",
-                "role": "Flight Surgeon / Medical Officer",
-                "mission_phase": "Ares-IV Transit (Sol 142)",
+                "role": "Crew Medical Officer / Flight Surgeon",
+                "mission_phase": "Deep Space Gateway Transit (Sol 142)",
                 "avatar_initials": "AC",
                 "is_simulated": True,
-                "created_at": (datetime.now(timezone.utc) - timedelta(days=150)).isoformat()
+                "created_at": (now - timedelta(days=150)).isoformat()
             },
             {
                 "id": "c3-marcus-vance",
                 "display_label": "Marcus Vance",
-                "role": "Chief Flight Engineer",
-                "mission_phase": "Ares-IV Transit (Sol 142)",
+                "role": "Chief Systems & Robotics Engineer",
+                "mission_phase": "Deep Space Gateway Transit (Sol 142)",
                 "avatar_initials": "MV",
                 "is_simulated": True,
-                "created_at": (datetime.now(timezone.utc) - timedelta(days=150)).isoformat()
+                "created_at": (now - timedelta(days=150)).isoformat()
             },
             {
                 "id": "c4-sarah-jenkins",
                 "display_label": "Sarah Jenkins",
                 "role": "Payload & Astrobiology Specialist",
-                "mission_phase": "Ares-IV Transit (Sol 142)",
+                "mission_phase": "Deep Space Gateway Transit (Sol 142)",
                 "avatar_initials": "SJ",
                 "is_simulated": True,
-                "created_at": (datetime.now(timezone.utc) - timedelta(days=150)).isoformat()
+                "created_at": (now - timedelta(days=150)).isoformat()
             }
         ]
 
@@ -62,10 +119,7 @@ class DataStore:
             self.subjects[crew["id"]] = crew
 
         # 2. Seed synthetic historical observations across last 7 days
-        now = datetime.now(timezone.utc)
-
         for crew_id in self.subjects.keys():
-            # Generate 24 hourly observations for the last 24h, plus 6-hourly points for previous 6 days
             time_points = []
             for h in range(24, 0, -1):
                 time_points.append(now - timedelta(hours=h))
@@ -74,125 +128,150 @@ class DataStore:
                     time_points.append(now - timedelta(days=d, hours=h_step))
             time_points.sort()
 
-            # Baseline parameters
-            base_hr = 68.0 if crew_id != "c3-marcus-vance" else 74.0
-            base_spo2 = 98.2
-            base_temp = 36.7
-            base_rr = 14.0
+            base_hr = 66.0 if crew_id != "c3-marcus-vance" else 76.0
+            base_spo2 = 98.4
 
             for t in time_points:
                 t_iso = t.isoformat()
                 
-                # Heart Rate
-                noise_hr = random.uniform(-4.0, 4.0)
-                hr_val = round(base_hr + noise_hr, 1)
-                # Introduce a controlled spike for Marcus Vance 3 hours ago (EVA exercise)
+                # Heart Rate (Cardiovascular)
+                hr_val = round(base_hr + random.uniform(-3.0, 3.0), 1)
                 if crew_id == "c3-marcus-vance" and (now - t).total_seconds() < 12000 and (now - t).total_seconds() > 7200:
-                    hr_val = 114.0
+                    hr_val = 112.5
                 
-                obs_hr = {
+                self.observations.append({
                     "id": str(uuid.uuid4()),
                     "subject_id": crew_id,
                     "measurement_type": "heart_rate",
+                    "domain": "cardiovascular",
                     "value_numeric": hr_val,
                     "value_text": None,
                     "unit": "bpm",
                     "observed_at": t_iso,
                     "recorded_at": t_iso,
-                    "source": "bio_harness_telemetry",
+                    "source_type": "synthetic_demo",
+                    "source_name": "Bio-Harness Telemetry Simulator",
+                    "dataset_id": None,
                     "is_simulated": True,
-                    "created_by": "telemetry_daemon",
+                    "created_by": "telemetry_agent",
                     "client_operation_id": str(uuid.uuid4()),
                     "note": "Continuous biotelemetry stream"
-                }
-                self.observations.append(obs_hr)
+                })
 
-                # SpO2
-                spo2_val = round(base_spo2 + random.uniform(-0.8, 0.8), 1)
-                # Introduce a mild drop for Sarah Jenkins 5 hours ago
+                # SpO2 (Cardiovascular)
+                spo2_val = round(base_spo2 + random.uniform(-0.6, 0.6), 1)
                 if crew_id == "c4-sarah-jenkins" and (now - t).total_seconds() < 20000 and (now - t).total_seconds() > 14000:
-                    spo2_val = 93.4
+                    spo2_val = 93.2
                 
-                obs_spo2 = {
+                self.observations.append({
                     "id": str(uuid.uuid4()),
                     "subject_id": crew_id,
                     "measurement_type": "spo2",
+                    "domain": "cardiovascular",
                     "value_numeric": min(100.0, spo2_val),
                     "value_text": None,
                     "unit": "%",
                     "observed_at": t_iso,
                     "recorded_at": t_iso,
-                    "source": "bio_harness_telemetry",
+                    "source_type": "synthetic_demo",
+                    "source_name": "Pulse Oximeter Telemetry",
+                    "dataset_id": None,
                     "is_simulated": True,
-                    "created_by": "telemetry_daemon",
+                    "created_by": "telemetry_agent",
                     "client_operation_id": str(uuid.uuid4()),
-                    "note": "Pulse oximetry continuous feed"
-                }
-                self.observations.append(obs_spo2)
+                    "note": "Pulse oximetry continuous stream"
+                })
 
-                # Core Temp
-                temp_val = round(base_temp + random.uniform(-0.2, 0.2), 1)
-                if crew_id == "c2-alex-chen" and (now - t).total_seconds() < 15000 and (now - t).total_seconds() > 9000:
-                    temp_val = 37.9
-
-                obs_temp = {
+                # Bone Resorption Marker (Bone and Physical - NASA OSD-919 Grounded)
+                ntx_val = 48.0 + random.uniform(-3.0, 3.0)
+                if crew_id == "c1-elena-rostova" and (now - t).total_seconds() < 24000:
+                    ntx_val = 72.4
+                self.observations.append({
                     "id": str(uuid.uuid4()),
                     "subject_id": crew_id,
-                    "measurement_type": "core_temp",
-                    "value_numeric": temp_val,
+                    "measurement_type": "bone_resorption_marker",
+                    "domain": "bone_physical",
+                    "value_numeric": round(ntx_val, 1),
                     "value_text": None,
-                    "unit": "°C",
+                    "unit": "nmol BCE",
                     "observed_at": t_iso,
                     "recorded_at": t_iso,
-                    "source": "thermal_skin_sensor",
+                    "source_type": "nasa",
+                    "source_name": "NASA OSDR OSD-919 Research Model",
+                    "dataset_id": "OSD-919",
                     "is_simulated": True,
-                    "created_by": "telemetry_daemon",
+                    "created_by": "osdr_biomarker_engine",
                     "client_operation_id": str(uuid.uuid4()),
-                    "note": "Continuous deep-tissue sensor"
-                }
-                self.observations.append(obs_temp)
+                    "note": "Spaceflight bone deconditioning marker"
+                })
 
-                # Respiration Rate
-                rr_val = round(base_rr + random.uniform(-1.5, 1.5), 1)
-                obs_rr = {
+                # Radiation Flux (Radiation - NASA EDA Grounded)
+                self.observations.append({
                     "id": str(uuid.uuid4()),
                     "subject_id": crew_id,
-                    "measurement_type": "respiration_rate",
-                    "value_numeric": rr_val,
+                    "measurement_type": "cabin_radiation_flux",
+                    "domain": "radiation",
+                    "value_numeric": round(21.4 + random.uniform(-1.5, 1.5), 1),
                     "value_text": None,
-                    "unit": "brpm",
+                    "unit": "μSv/h",
                     "observed_at": t_iso,
                     "recorded_at": t_iso,
-                    "source": "chest_strain_gauge",
+                    "source_type": "nasa",
+                    "source_name": "NASA Environmental Data App (EDA)",
+                    "dataset_id": "EDA-ISS",
                     "is_simulated": True,
-                    "created_by": "telemetry_daemon",
+                    "created_by": "eda_telemetry_relay",
                     "client_operation_id": str(uuid.uuid4()),
-                    "note": "Thoracic expansion frequency"
-                }
-                self.observations.append(obs_rr)
+                    "note": "Active dosimeter flux"
+                })
 
-            # Daily metrics: Sleep duration for each of the last 7 days
+                # Cabin CO2 (Environmental - NASA EDA Grounded)
+                co2_val = 2650.0 + random.uniform(-100.0, 100.0)
+                if (now - t).total_seconds() < 14400:
+                    co2_val = 3680.0
+                self.observations.append({
+                    "id": str(uuid.uuid4()),
+                    "subject_id": crew_id,
+                    "measurement_type": "cabin_co2_ppm",
+                    "domain": "environmental",
+                    "value_numeric": round(co2_val, 1),
+                    "value_text": None,
+                    "unit": "ppm",
+                    "observed_at": t_iso,
+                    "recorded_at": t_iso,
+                    "source_type": "nasa",
+                    "source_name": "NASA Environmental Data App (EDA)",
+                    "dataset_id": "EDA-ISS",
+                    "is_simulated": True,
+                    "created_by": "eda_telemetry_relay",
+                    "client_operation_id": str(uuid.uuid4()),
+                    "note": "Cabin atmospheric sensor"
+                })
+
+            # Daily Sleep duration for the last 7 days (Behavioral Health)
             for d in range(7, 0, -1):
                 sleep_t = (now - timedelta(days=d, hours=2)).isoformat()
-                sleep_hours = 7.5 if crew_id != "c1-elena-rostova" else (4.6 if d == 1 else 7.1)
-                obs_sleep = {
+                sleep_hours = 7.5 if crew_id != "c1-elena-rostova" else (4.4 if d == 1 else 7.2)
+                self.observations.append({
                     "id": str(uuid.uuid4()),
                     "subject_id": crew_id,
                     "measurement_type": "sleep_duration",
+                    "domain": "behavioral",
                     "value_numeric": sleep_hours,
                     "value_text": None,
                     "unit": "hrs",
                     "observed_at": sleep_t,
                     "recorded_at": sleep_t,
-                    "source": "sleep_station_accelerometer",
+                    "source_type": "synthetic_demo",
+                    "source_name": "Sleep Quarters Actigraph",
+                    "dataset_id": None,
                     "is_simulated": True,
-                    "created_by": "sleep_tracker",
+                    "created_by": "sleep_daemon",
                     "client_operation_id": str(uuid.uuid4()),
-                    "note": "Polysomnography & actigraphy estimation"
-                }
-                self.observations.append(obs_sleep)
+                    "note": "Actigraphy rest period analysis"
+                })
 
-        # 3. Seed initial transparent review flags based on the injected events
+        # 3. Seed Explainable Review Flags
         self.review_flags = [
             {
                 "id": "flag-001",
@@ -200,7 +279,13 @@ class DataStore:
                 "subject_id": "c3-marcus-vance",
                 "rule_code": "R-101",
                 "severity": "MEDIUM",
-                "reason": "Review suggested: Heart rate 114 bpm exceeds configured resting threshold (>105 bpm) during EVA pre-breathing protocol. Not a clinical diagnosis.",
+                "domain": "cardiovascular",
+                "what_changed": "Resting heart rate reached 112.5 bpm (sustained above 105 bpm threshold).",
+                "baseline_reference": "Personal 30-day resting baseline: 64.2 ± 4.1 bpm.",
+                "period_considered": "2.5 hours during pre-EVA airlock preparation.",
+                "flag_reason": "Elevated cardiovascular workload detected outside active countermeasure exercise intervals.",
+                "action_to_review": "Flight Surgeon review requested: verify hydration status and inspect bio-harness electrode contact.",
+                "reason": "Review suggested: Heart rate 112.5 bpm exceeds configured resting threshold (>105 bpm). Non-clinical decision support only.",
                 "created_at": (now - timedelta(hours=2, minutes=45)).isoformat(),
                 "acknowledged_by": None,
                 "acknowledged_at": None,
@@ -212,20 +297,32 @@ class DataStore:
                 "subject_id": "c4-sarah-jenkins",
                 "rule_code": "R-102",
                 "severity": "HIGH",
-                "reason": "Review suggested: SpO2 dipped to 93.4% (<94% safety margin) during airlock maintenance. Check seal integrity. Not a clinical diagnosis.",
+                "domain": "cardiovascular",
+                "what_changed": "SpO2 desaturation down to 93.2% (<94.0% cabin minimum threshold).",
+                "baseline_reference": "Mission baseline average: 98.2 ± 0.6%.",
+                "period_considered": "45-minute window during botanical glovebox maintenance.",
+                "flag_reason": "Peripheral oxygen saturation declined below safe threshold; potential local ventilation stagnation.",
+                "action_to_review": "Crew member repositioned pulse oximeter and confirmed cabin air circulation fan nominal.",
+                "reason": "Review suggested: SpO2 dipped to 93.2% during science airlock cycle. Sensor recalibrated; nominal values restored.",
                 "created_at": (now - timedelta(hours=4, minutes=10)).isoformat(),
                 "acknowledged_by": "Dr. Alex Chen",
                 "acknowledged_at": (now - timedelta(hours=3, minutes=15)).isoformat(),
-                "notes": "Reviewed with crew member. Sensor repositioned; subsequent SpO2 reads 98.4%. Continued monitoring."
+                "notes": "Follow-up confirmed sensor slippage during glove manipulation. Re-test SpO2: 98.4%. No clinical pathology."
             },
             {
                 "id": "flag-003",
                 "observation_id": None,
-                "subject_id": "c2-alex-chen",
-                "rule_code": "R-103",
-                "severity": "HIGH",
-                "reason": "Review suggested: Core body temperature elevation to 37.9°C (>37.8°C threshold) following resistive countermeasure exercise. Not a clinical diagnosis.",
-                "created_at": (now - timedelta(hours=3, minutes=30)).isoformat(),
+                "subject_id": "c1-elena-rostova",
+                "rule_code": "R-106",
+                "severity": "MEDIUM",
+                "domain": "bone_physical",
+                "what_changed": "Bone resorption biomarker (NTx) reached 72.4 nmol BCE (threshold 68.0).",
+                "baseline_reference": "NASA OSDR OSD-919 reference cohort: 46.0 ± 8.2 nmol BCE.",
+                "period_considered": "72-hour rolling urine turnover assay.",
+                "flag_reason": "Accelerated collagen matrix degradation consistent with spaceflight microgravity deconditioning.",
+                "action_to_review": "Evaluate ARED (Advanced Resistive Exercise Device) adherence and dietary Vitamin D / calcium intake.",
+                "reason": "Review suggested: Bone resorption marker surge. Informed by NASA OSDR OSD-919 microgravity research.",
+                "created_at": (now - timedelta(hours=6)).isoformat(),
                 "acknowledged_by": None,
                 "acknowledged_at": None,
                 "notes": None
@@ -236,7 +333,13 @@ class DataStore:
                 "subject_id": "c1-elena-rostova",
                 "rule_code": "R-104",
                 "severity": "LOW",
-                "reason": "Review suggested: Total sleep duration 4.6 hours reflects acute sleep deficit (<5.0h) prior to orbital rendezvous burn. Not a clinical diagnosis.",
+                "domain": "behavioral",
+                "what_changed": "Sleep duration recorded at 4.4 hours (<5.0h operational cognitive safety threshold).",
+                "baseline_reference": "Personal mission average: 7.4 ± 0.8 hours.",
+                "period_considered": "Sleep block prior to Sol 142 orbital correction burn.",
+                "flag_reason": "Acute sleep deficit detected; correlates with high operational tempo during rendezvous maneuvers.",
+                "action_to_review": "Schedule compensatory rest cycle; verify sleep cabin acoustic and lighting baffles.",
+                "reason": "Review suggested: Acute sleep deprivation prior to high-criticality flight burn. Rest period recommended.",
                 "created_at": (now - timedelta(hours=8)).isoformat(),
                 "acknowledged_by": None,
                 "acknowledged_at": None,
@@ -252,10 +355,14 @@ class DataStore:
                 "actor_role": "system",
                 "event_type": "system.init",
                 "resource_type": "mission_system",
-                "resource_id": "ares-iv-telemetry",
+                "resource_id": "gateway-core",
                 "occurred_at": (now - timedelta(days=7)).isoformat(),
                 "request_id": "req-init-001",
-                "metadata": {"status": "nominal", "mission_day": 142}
+                "metadata": {
+                    "mission": "NASA Space Apps 2026 - Astronaut Health Guardian",
+                    "status": "nominal",
+                    "nasa_resources_loaded": 5
+                }
             },
             {
                 "id": str(uuid.uuid4()),
@@ -277,7 +384,7 @@ class DataStore:
                 "resource_id": "batch-108",
                 "occurred_at": (now - timedelta(hours=1, minutes=10)).isoformat(),
                 "request_id": "req-sync-108",
-                "metadata": {"items_synced": 4, "network": "dsm_link_restored"}
+                "metadata": {"items_synced": 6, "provenance": "NASA OSDR & Synthetic Hybrid"}
             }
         ]
 
@@ -293,7 +400,6 @@ class DataStore:
             res = [o for o in res if o["subject_id"] == subject_id]
         if measurement_type:
             res = [o for o in res if o["measurement_type"] == measurement_type]
-        # Sort descending by observed_at
         res = sorted(res, key=lambda x: x["observed_at"], reverse=True)
         return res[:limit]
 
@@ -305,25 +411,26 @@ class DataStore:
             "id": obs_id,
             "subject_id": obs_data["subject_id"],
             "measurement_type": obs_data["measurement_type"],
+            "domain": obs_data.get("domain", "cardiovascular"),
             "value_numeric": float(obs_data["value_numeric"]),
             "value_text": obs_data.get("value_text"),
             "unit": obs_data["unit"],
             "observed_at": obs_data.get("observed_at") or now_iso,
             "recorded_at": now_iso,
-            "source": obs_data.get("source", "manual_crew_entry"),
+            "source_type": obs_data.get("source_type", "synthetic_demo"),
+            "source_name": obs_data.get("source_name", "Bio-Harness Telemetry Simulator"),
+            "dataset_id": obs_data.get("dataset_id"),
             "is_simulated": True,
             "created_by": obs_data.get("created_by", "crew_member"),
             "client_operation_id": obs_data.get("client_operation_id"),
             "note": obs_data.get("note")
         }
 
-        # Track client idempotency key if present
         if record["client_operation_id"]:
             self.client_operation_ids.add(record["client_operation_id"])
 
         self.observations.append(record)
 
-        # Record audit event
         self.record_audit_event(
             actor_user_id=record["created_by"] or "crew_member",
             actor_role="contributor",
@@ -381,6 +488,7 @@ class DataStore:
     def get_audit_events(self, limit: int = 50) -> List[Dict[str, Any]]:
         return self.audit_events[:limit]
 
-# Singleton data store instance
-db = DataStore()
+    def get_nasa_resources(self) -> List[Dict[str, Any]]:
+        return self.nasa_resources
 
+db = DataStore()

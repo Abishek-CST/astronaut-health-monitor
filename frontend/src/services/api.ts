@@ -1,5 +1,5 @@
-import { Subject, Observation, ReviewFlag, QueuedOperation, AuditEvent, RuleDefinition } from '../types';
-import { SEED_SUBJECTS, SEED_RULES, generateSeedObservations, SEED_FLAGS, SEED_AUDITS } from './seed';
+import { Subject, Observation, ReviewFlag, QueuedOperation, AuditEvent, RuleDefinition, NasaResource } from '../types';
+import { SEED_SUBJECTS, SEED_RULES, generateSeedObservations, SEED_FLAGS, SEED_AUDITS, NASA_RESOURCES } from './seed';
 
 const API_BASE = '/api/v1';
 const QUEUE_STORAGE_KEY = 'astronaut_offline_sync_queue';
@@ -269,6 +269,17 @@ export class ApiService {
         disclaimer: "Experimental review rules for decision support. NOT clinical diagnostic criteria.",
         rules: SEED_RULES
       };
+    }
+  }
+
+  // Fetch NASA Resources Catalog
+  public static async getNasaResources(): Promise<NasaResource[]> {
+    try {
+      const res = await fetch(`${API_BASE}/nasa-resources`);
+      if (!res.ok) throw new Error('API unreachable');
+      return await res.json();
+    } catch {
+      return NASA_RESOURCES;
     }
   }
 }

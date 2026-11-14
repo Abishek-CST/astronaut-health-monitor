@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException, Query, Header
 from typing import List, Optional, Dict, Any
 from .schemas import (
     SubjectBase, ObservationCreate, ObservationOut, ReviewFlagOut,
-    FlagAcknowledgeRequest, SyncBatchRequest, SyncBatchResponse, AuditEventOut
+    FlagAcknowledgeRequest, SyncBatchRequest, SyncBatchResponse, AuditEventOut,
+    NasaResourceOut
 )
 from .storage import db
 import sys
@@ -142,6 +143,10 @@ def batch_sync_operations(batch: SyncBatchRequest):
 @router.get("/audit-events", response_model=List[AuditEventOut])
 def list_audit_events(limit: int = Query(50, ge=1, le=200)):
     return db.get_audit_events(limit=limit)
+
+@router.get("/nasa-resources", response_model=List[NasaResourceOut])
+def list_nasa_resources():
+    return db.get_nasa_resources()
 
 @router.get("/rules")
 def get_rules_manifest():

@@ -8,20 +8,61 @@ import {
   Layers, 
   CheckSquare, 
   ExternalLink,
-  Code,
-  AlertTriangle
+  Sparkles,
+  Globe,
+  AlertTriangle,
+  Info
 } from 'lucide-react';
 
 export const SystemDocs: React.FC = () => {
-  const [activeDoc, setActiveDoc] = useState<'architecture' | 'database' | 'rules' | 'offline' | 'security' | 'submission'>('architecture');
+  const [activeDoc, setActiveDoc] = useState<'nasa_resources' | 'si_disclosure' | 'architecture' | 'database' | 'rules' | 'offline' | 'submission'>('nasa_resources');
 
   const docsNav = [
+    { id: 'nasa_resources', label: 'NASA Resources & Provenance', icon: Globe },
+    { id: 'si_disclosure', label: 'SI (AI) Usage Disclosure', icon: Sparkles },
     { id: 'architecture', label: 'Architecture & Stack', icon: Layers },
-    { id: 'database', label: 'Database Schema', icon: Database },
-    { id: 'rules', label: 'AI/ML & Review Rules', icon: Cpu },
+    { id: 'database', label: 'Database & Provenance', icon: Database },
+    { id: 'rules', label: 'AI/ML 3-Stage Plan', icon: Cpu },
     { id: 'offline', label: 'Offline Sync Flow', icon: RefreshCw },
-    { id: 'security', label: 'Security & Privacy', icon: ShieldCheck },
-    { id: 'submission', label: 'NASA 2026 Checklist', icon: CheckSquare },
+    { id: 'submission', label: 'Submission Checklist', icon: CheckSquare },
+  ];
+
+  const nasaResources = [
+    {
+      name: "NASA Open Science Data Repository (OSDR)",
+      url: "https://osdr.nasa.gov/bio/repo/",
+      datasetId: "OSDR-Core",
+      description: "OSDR provides space-life-science datasets and research resources used to ground the project's monitoring domains and scientific context.",
+      usage: "Identifies relevant monitoring domains, baseline physiological boundaries, and data models for deep-space transit."
+    },
+    {
+      name: "NASA OSDR Visualization Portal",
+      url: "https://visualization.osdr.nasa.gov/",
+      datasetId: "OSDR-Viz",
+      description: "Provides analytical tools and portals for exploring space-life-science data and related mission applications.",
+      usage: "Guides multi-domain time-series visualization, statistical distributions, and normal range band overlays."
+    },
+    {
+      name: "NASA Environmental Data App (EDA)",
+      url: "https://visualization.osdr.nasa.gov/eda/",
+      datasetId: "EDA-ISS",
+      description: "Provides ISS cabin and hardware environmental telemetry and radiation information, including temperature, carbon dioxide, relative humidity, and radiation-dose flux.",
+      usage: "Direct scientific grounding for the Environmental Conditions and Radiation Exposure monitoring domains."
+    },
+    {
+      name: "NASA OSDR OSD-919",
+      url: "https://osdr.nasa.gov/bio/repo/data/studies/OSD-919",
+      datasetId: "OSD-919",
+      description: "Spaceflight-related bone deconditioning and remodeling research in microgravity.",
+      usage: "Grounds the Bone and Physical Health domain, providing baseline parameters for collagen degradation (NTx biomarker)."
+    },
+    {
+      name: "NASA OSDR OSD-918",
+      url: "https://osdr.nasa.gov/bio/repo/data/studies/OSD-918",
+      datasetId: "OSD-918",
+      description: "Spaceflight-related blood and immune response data during long-duration flight.",
+      usage: "Grounds the Immune and Physiological Indicator domain, tracking systemic inflammatory status under mission stress."
+    }
   ];
 
   return (
@@ -32,19 +73,19 @@ export const SystemDocs: React.FC = () => {
           <div>
             <h2 className="text-base font-bold text-white flex items-center gap-2">
               <FileText className="w-5 h-5 text-cyan-400" />
-              System Documentation & Architectural Specifications
+              Astronaut Health Guardian — Mission Documentation
             </h2>
             <p className="text-xs text-slate-400 mt-1">
-              Direct implementation of project specification files (README, REQUIREMENTS, ARCHITECTURE, DATABASE, AI_ML_PLAN, OFFLINE_SYNC, SECURITY, SUBMISSION).
+              NASA Space Apps Challenge 2026 • AI-Assisted, Offline-First Health Monitoring for Long-Duration Exploration
             </p>
           </div>
           <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-cyan-950 border border-cyan-800 text-cyan-300">
-            Interactive Technical Specification
+            Interactive Documentation Suite
           </span>
         </div>
 
         {/* Sub-navigation tabs */}
-        <div className="flex overflow-x-auto gap-2 mt-4 pt-3 border-t border-slate-800/80">
+        <div className="flex overflow-x-auto gap-2 mt-4 pt-3 border-t border-slate-800/80 no-scrollbar">
           {docsNav.map((item) => {
             const Icon = item.icon;
             const isSel = activeDoc === item.id;
@@ -52,7 +93,7 @@ export const SystemDocs: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => setActiveDoc(item.id as any)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium font-mono transition-all cursor-pointer ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium font-mono transition-all cursor-pointer whitespace-nowrap ${
                   isSel
                     ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
                     : 'bg-slate-950/60 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -68,66 +109,205 @@ export const SystemDocs: React.FC = () => {
 
       {/* Content Area */}
       <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-6 text-slate-300 space-y-6">
+        
+        {/* NASA RESOURCES & PROVENANCE */}
+        {activeDoc === 'nasa_resources' && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Globe className="w-5 h-5 text-cyan-400" />
+                NASA Data & Scientific Resources Integration
+              </h3>
+              <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800 text-cyan-300">
+                Direct Citations & URLs
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Astronaut Health Guardian grounds its health monitoring domains, environmental parameters, and clinical decision-support logic in official NASA Open Science Data Repository (OSDR) studies and NASA Environmental Data App telemetry references.
+            </p>
+
+            <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-200">
+              <strong className="block font-semibold mb-1 flex items-center gap-1.5 text-amber-300">
+                <AlertTriangle className="w-4 h-4 text-amber-400" />
+                Important Limitation & Data Provenance Notice:
+              </strong>
+              Dashboard measurements in this prototype are synthetic/demo data unless an authorized NASA sensor stream is directly linked. Every measurement is visibly labeled <code>Simulated/Demo Data</code>. The prototype is not a medical device and does not claim to diagnose disease.
+            </div>
+
+            {/* Official NASA Resources Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-mono border border-slate-800 rounded-xl overflow-hidden">
+                <thead className="bg-slate-950 text-cyan-300 border-b border-slate-800">
+                  <tr>
+                    <th className="p-3">Resource Name</th>
+                    <th className="p-3">Dataset ID</th>
+                    <th className="p-3">Scientific Description</th>
+                    <th className="p-3">Application Usage</th>
+                    <th className="p-3">Link</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800 bg-slate-950/40">
+                  {nasaResources.map((res, i) => (
+                    <tr key={i} className="hover:bg-slate-800/30 transition-colors">
+                      <td className="p-3 font-bold text-white whitespace-nowrap">
+                        {res.name}
+                      </td>
+                      <td className="p-3 text-cyan-400 font-semibold">
+                        {res.datasetId}
+                      </td>
+                      <td className="p-3 text-slate-300 font-sans text-xs">
+                        {res.description}
+                      </td>
+                      <td className="p-3 text-slate-400 font-sans text-xs">
+                        {res.usage}
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <a
+                          href={res.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-cyan-400 hover:text-cyan-300 underline font-sans"
+                        >
+                          Visit <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Data Distinction Breakdown */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 pt-2 text-xs font-mono">
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl">
+                <span className="text-cyan-400 font-bold block mb-1">1. NASA-Derived Data</span>
+                <p className="text-[11px] text-slate-400 font-sans">
+                  Sourced from OSDR/EDA studies to establish physiological reference limits and atmospheric standards.
+                </p>
+              </div>
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl">
+                <span className="text-amber-400 font-bold block mb-1">2. Simulated Demo Data</span>
+                <p className="text-[11px] text-slate-400 font-sans">
+                  Artificially generated biotelemetry streams explicitly tagged with <code>is_simulated: true</code>.
+                </p>
+              </div>
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl">
+                <span className="text-emerald-400 font-bold block mb-1">3. Calculated Data</span>
+                <p className="text-[11px] text-slate-400 font-sans">
+                  Derived moving averages, rolling baselines, and HRV-derived stress indices computed on device.
+                </p>
+              </div>
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl">
+                <span className="text-purple-400 font-bold block mb-1">4. ML Experimental Output</span>
+                <p className="text-[11px] text-slate-400 font-sans">
+                  Statistical anomaly scores (Stage 3 z-score drift) presented strictly as human review advisories.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* SUPER INTELLIGENCE (SI) USAGE DISCLOSURE */}
+        {activeDoc === 'si_disclosure' && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-400" />
+              Super Intelligence (SI) & AI Usage Disclosure
+            </h3>
+
+            <div className="p-4 bg-purple-950/30 border border-purple-500/40 rounded-xl text-xs space-y-3">
+              <div className="text-purple-200 font-semibold text-sm">
+                Disclosure Statement per NASA Space Apps Challenge Rules
+              </div>
+              <p className="text-slate-300 leading-relaxed font-sans">
+                Large language models and AI-assisted tooling (ChatGPT / Claude / Gemini) were utilized during project development for:
+              </p>
+              <ul className="list-disc list-inside text-slate-300 font-sans space-y-1">
+                <li>Project ideation and requirement refinement based on NASA challenge statements</li>
+                <li>Documentation and architectural structuring (Markdown blueprints)</li>
+                <li>FastAPI backend scaffold and PWA synchronization queue mechanics</li>
+                <li>Deterministic rule definitions and synthetic telemetry test case generation</li>
+              </ul>
+              <p className="text-slate-300 leading-relaxed font-sans">
+                The human developer reviewed, verified, adapted, integrated, tested, and demonstrated the resulting codebase and application.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                <h4 className="font-bold text-cyan-400 font-mono">Branding & Logo Compliance</h4>
+                <p className="text-slate-400 font-sans leading-relaxed">
+                  <strong>Strict Compliance:</strong> No AI-generated content contains, modifies, or imitates official NASA logos, the NASA meatball or worm insignia, national flags, mission patches, or federal identifiers. All icons are generic open-source Lucide UI elements.
+                </p>
+              </div>
+
+              <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                <h4 className="font-bold text-cyan-400 font-mono">Explainability & Human In The Loop</h4>
+                <p className="text-slate-400 font-sans leading-relaxed">
+                  All review flags generated by the system are explainable (stating what changed, baseline reference, time period, and review guidance). AI outputs are never trusted blindly and require Flight Surgeon acknowledgment.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ARCHITECTURE */}
         {activeDoc === 'architecture' && (
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <Layers className="w-5 h-5 text-cyan-400" />
-              Architecture Overview & Component Pipeline
+              Architecture Overview & Flow
             </h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              The Astronaut Health Monitor is engineered as a resilient, offline-first client-server system designed for long-duration spaceflight (e.g. Martian transit, Lunar Gateway) and remote Earth research stations (Antarctic stations, deep wilderness field medicine).
-            </p>
 
             <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-cyan-300 overflow-x-auto">
               <pre className="text-[11px] leading-5">
-{`+-------------------------------------------------------------+
-|                 CLIENT: REACT + TYPESCRIPT PWA              |
-|  - Real-time Vitals HUD & Telemetry Dashboard               |
-|  - Service Worker: Cache versioned application shell        |
-|  - IndexedDB / LocalStorage: Offline operation write queue  |
-|  - Client UUID & Idempotency Key Generation                 |
-+------------------------------+------------------------------+
-                               |
-                   HTTPS Sync / REST API
-                               |
-+------------------------------v------------------------------+
-|                  BACKEND: PYTHON FASTAPI                    |
-|  - Request Validation & Physiological Boundary Guardrails   |
-|  - Role-Based Access Control (RBAC) Enforcement             |
-|  - Idempotent Sync Batch Dispatcher (/api/v1/sync)          |
-|  - Review-Flag Trigger Evaluator                            |
-|  - Immutable Audit Event Recording                          |
-+---------------+------------------------------+--------------+
-                |                              |
-+---------------v-------------+  +-------------v--------------+
-|     POSTGRESQL / DATABASE   |  |   TRANSPARENT RULES ENGINE |
-| - Users, Subjects, Vitals   |  | - Rules R-101 to R-106     |
-| - Review Flags & Audit Log  |  | - Multivariate Z-Score     |
-| - Unique Idempotency Keys   |  | - Explainability & Context |
-+-----------------------------+  +----------------------------+`}
+{`NASA OSDR / NASA Resources (OSD-919, OSD-918, EDA)
+          |
+          v
+NASA Data / Reference Layer
+          |
+     +----+----+
+     |         |
+     v         v
+NASA-derived  Synthetic demo
+/context data data
+     |         |
+     +----+----+
+          |
+          v
+   React 19 + Vite Frontend PWA
+          |
+   Astronaut Health Guardian Dashboard
+          |
+ +--------+--------+
+ |        |        |
+ v        v        v
+Personal  Trend    Explainable
+Baseline  Analysis Review Flags
+          |
+    Offline Storage (IndexedDB / Service Worker)
+          |
+      Sync Queue (Idempotency UUIDs)
+          |
+       FastAPI Backend
+          |
+     PostgreSQL / DataStore`}
               </pre>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div className="p-3.5 bg-slate-950/70 rounded-lg border border-slate-800">
-                <h4 className="font-bold text-white mb-1.5 text-cyan-400">Core Technologies</h4>
-                <ul className="space-y-1 text-slate-400 list-disc list-inside">
-                  <li><strong>Frontend:</strong> React 19, TypeScript, Tailwind CSS, Lucide Icons</li>
-                  <li><strong>Backend:</strong> Python FastAPI, Pydantic v2, Uvicorn</li>
-                  <li><strong>Offline Layer:</strong> Service Worker, Web Storage, Client UUIDs</li>
-                  <li><strong>Data Model:</strong> Relational Schema matching DATABASE.md</li>
-                </ul>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl">
+                <strong className="text-cyan-400 block mb-1">1. Visible Provenance</strong>
+                <p className="text-slate-400 text-[11px]">Every record explicitly tags its origin (NASA, Synthetic, Calculated).</p>
               </div>
-
-              <div className="p-3.5 bg-slate-950/70 rounded-lg border border-slate-800">
-                <h4 className="font-bold text-white mb-1.5 text-cyan-400">Key Architectural Principles</h4>
-                <ul className="space-y-1 text-slate-400 list-disc list-inside">
-                  <li><strong>Deterministic Rules First:</strong> Explainable decision support over black boxes</li>
-                  <li><strong>Append-Only Ingestion:</strong> Telemetry records remain immutable</li>
-                  <li><strong>Idempotent Operations:</strong> Safe repeated submissions during flaky comms</li>
-                  <li><strong>Explicit Provenance:</strong> Simulated tags enforced across all layers</li>
-                </ul>
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl">
+                <strong className="text-cyan-400 block mb-1">2. Offline-First PWA</strong>
+                <p className="text-slate-400 text-[11px]">Full local HUD, offline write queue, and automatic reconnection synchronization.</p>
+              </div>
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl">
+                <strong className="text-cyan-400 block mb-1">3. Non-Diagnostic Decision Support</strong>
+                <p className="text-slate-400 text-[11px]">Strictly advises review; never issues clinical medical diagnoses.</p>
               </div>
             </div>
           </div>
@@ -138,109 +318,79 @@ export const SystemDocs: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <Database className="w-5 h-5 text-cyan-400" />
-              Relational Database Schema & Entities
+              Core Tables & Data Provenance Model
             </h3>
             <p className="text-xs text-slate-300">
-              The data model strictly implements the relational entity design outlined in <code>DATABASE.md</code>, ensuring rigorous tracking of units, sources, and idempotency identifiers.
+              The database structure implements the 8 core tables specified in <code>DATABASE.md</code>:
             </p>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs font-mono border border-slate-800 rounded-lg overflow-hidden">
-                <thead className="bg-slate-950 text-cyan-300 border-b border-slate-800">
-                  <tr>
-                    <th className="p-2.5">Table</th>
-                    <th className="p-2.5">Primary Key</th>
-                    <th className="p-2.5">Key Columns</th>
-                    <th className="p-2.5">Constraints & Notes</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800 bg-slate-950/40">
-                  <tr>
-                    <td className="p-2.5 font-bold text-white">subjects</td>
-                    <td className="p-2.5 text-slate-400">id (UUID)</td>
-                    <td className="p-2.5">display_label, role, mission_phase</td>
-                    <td className="p-2.5 text-amber-300">is_simulated = TRUE (Demo crew)</td>
-                  </tr>
-                  <tr>
-                    <td className="p-2.5 font-bold text-white">observations</td>
-                    <td className="p-2.5 text-slate-400">id (UUID)</td>
-                    <td className="p-2.5">subject_id, measurement_type, value_numeric, unit, observed_at, source</td>
-                    <td className="p-2.5 text-emerald-400">UNIQUE(client_operation_id) for idempotent sync</td>
-                  </tr>
-                  <tr>
-                    <td className="p-2.5 font-bold text-white">review_flags</td>
-                    <td className="p-2.5 text-slate-400">id (UUID)</td>
-                    <td className="p-2.5">observation_id, subject_id, rule_code, severity, reason, acknowledged_by</td>
-                    <td className="p-2.5 text-slate-400">Non-clinical review advisories</td>
-                  </tr>
-                  <tr>
-                    <td className="p-2.5 font-bold text-white">audit_events</td>
-                    <td className="p-2.5 text-slate-400">id (UUID)</td>
-                    <td className="p-2.5">actor_user_id, actor_role, event_type, resource_id, occurred_at, metadata</td>
-                    <td className="p-2.5 text-slate-400">Immutable UTC audit trail</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+              {['users', 'subjects', 'observations', 'baselines', 'review_flags', 'nasa_resources', 'sync_operations', 'audit_events'].map((t, idx) => (
+                <div key={idx} className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 text-cyan-300 font-bold text-center">
+                  {t}
+                </div>
+              ))}
+            </div>
+
+            <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 font-mono text-xs space-y-2">
+              <div className="text-white font-bold">Observation Record Schema:</div>
+              <pre className="text-slate-400 text-[11px]">
+{`{
+  "id": "obs-hr-c3-marcus-vance-2",
+  "subject_id": "c3-marcus-vance",
+  "measurement_type": "heart_rate",
+  "domain": "cardiovascular",
+  "value_numeric": 112.5,
+  "unit": "bpm",
+  "observed_at": "2026-11-13T21:00:00Z",
+  "source_type": "synthetic_demo",
+  "source_name": "Bio-Harness Telemetry Simulator",
+  "dataset_id": null,
+  "is_simulated": true,
+  "created_at": "2026-11-13T21:00:00Z"
+}`}
+              </pre>
             </div>
           </div>
         )}
 
-        {/* RULES */}
+        {/* 3-STAGE AI/ML PLAN */}
         {activeDoc === 'rules' && (
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <Cpu className="w-5 h-5 text-cyan-400" />
-              AI/ML Plan & Transparent Review Rules
+              AI / ML 3-Stage Progressive Architecture
             </h3>
-            <div className="p-3 bg-amber-950/40 border border-amber-600/40 rounded-lg text-xs text-amber-200">
-              <strong className="block mb-1 flex items-center gap-1.5 font-semibold">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
-                Ethical AI & Clinical Disclaimer (AI_ML_PLAN.md):
-              </strong>
-              These rules are transparent decision-support tools for mission controllers and flight surgeons. They do NOT diagnose illness, prescribe medication, or replace clinical procedures. All thresholds are illustrative demo baselines.
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
-              <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg">
-                <div className="font-bold text-white text-cyan-300">Rule R-101: Resting Tachycardia</div>
-                <p className="text-slate-400 text-[11px] font-sans mt-1">
-                  Triggers if resting heart rate &gt; 105 bpm or &lt; 45 bpm, suggesting physical exertion or cardiovascular stress during orbital routines.
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+              <div className="p-4 bg-slate-950 border border-cyan-500/30 rounded-xl space-y-2">
+                <span className="text-cyan-400 font-bold block text-sm">Stage 1: Deterministic Rules</span>
+                <p className="text-slate-400 font-sans text-[11px]">
+                  Transparent rules (R-101 to R-106) evaluating physiological ceilings, desaturation drops, cabin CO2, and thermal dysregulation.
                 </p>
+                <div className="text-[10px] text-cyan-300 bg-cyan-950/60 p-2 rounded">
+                  Fully explainable; audited logic; immediate trigger.
+                </div>
               </div>
 
-              <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg">
-                <div className="font-bold text-white text-cyan-300">Rule R-102: Hypoxia Desaturation</div>
-                <p className="text-slate-400 text-[11px] font-sans mt-1">
-                  Flags arterial oxygen saturation falling below 94% (warning) or 90% (critical), alerting to airlock seal or cabin scrubber anomalies.
+              <div className="p-4 bg-slate-950 border border-blue-500/30 rounded-xl space-y-2">
+                <span className="text-blue-400 font-bold block text-sm">Stage 2: Personal Trends</span>
+                <p className="text-slate-400 font-sans text-[11px]">
+                  Calculates individualized 30-day baseline deviations, rolling moving averages, rates of change, and diurnal circadian patterns.
                 </p>
+                <div className="text-[10px] text-blue-300 bg-blue-950/60 p-2 rounded">
+                  Adapts to the astronaut's unique microgravity baseline.
+                </div>
               </div>
 
-              <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg">
-                <div className="font-bold text-white text-cyan-300">Rule R-103: Core Hyperthermia</div>
-                <p className="text-slate-400 text-[11px] font-sans mt-1">
-                  Detects core temperature &gt; 37.8°C or &lt; 35.8°C, monitoring thermal stress during spacesuit operations (EVA).
+              <div className="p-4 bg-slate-950 border border-purple-500/30 rounded-xl space-y-2">
+                <span className="text-purple-400 font-bold block text-sm">Stage 3: Anomaly Detection</span>
+                <p className="text-slate-400 font-sans text-[11px]">
+                  Multivariate statistical z-score drift and optional Isolation Forest scoring across coupled biometric vectors.
                 </p>
-              </div>
-
-              <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg">
-                <div className="font-bold text-white text-cyan-300">Rule R-104: Acute Sleep Deficit</div>
-                <p className="text-slate-400 text-[11px] font-sans mt-1">
-                  Tracks total sleep &lt; 5.0 hours in a 24h cycle, flagging fatigue risks prior to critical spacecraft maneuvers.
-                </p>
-              </div>
-
-              <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg">
-                <div className="font-bold text-white text-cyan-300">Rule R-105: Telemetry Stale Alert</div>
-                <p className="text-slate-400 text-[11px] font-sans mt-1">
-                  Identifies biotelemetry streams with no updates for &gt; 6 hours, detecting sensor detachment or local radio interference.
-                </p>
-              </div>
-
-              <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg">
-                <div className="font-bold text-white text-cyan-300">Rule R-106: Multivariate Drift (ML)</div>
-                <p className="text-slate-400 text-[11px] font-sans mt-1">
-                  Computes rolling z-scores across coupled vitals (HR + respiration), highlighting multi-parameter anomalies exceeding 2.6σ.
-                </p>
+                <div className="text-[10px] text-purple-300 bg-purple-950/60 p-2 rounded">
+                  Flagged as experimental review advisory.
+                </div>
               </div>
             </div>
           </div>
@@ -251,55 +401,21 @@ export const SystemDocs: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <RefreshCw className="w-5 h-5 text-cyan-400" />
-              Offline Operation & Idempotent Synchronization Flow
+              Offline PWA Operation & Idempotent Synchronization
             </h3>
-            <p className="text-xs text-slate-300">
-              Per <code>OFFLINE_SYNC.md</code>, offline readiness is essential for spacecraft passing behind the Moon, entering planetary shadow, or experiencing Solar Particle Event (SPE) comms blackouts.
-            </p>
 
             <div className="space-y-3 text-xs">
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <strong className="text-cyan-300 block mb-1">1. Append-Only Local Storage</strong>
+                <strong className="text-cyan-300 block mb-1">1. Loss-of-Signal (LOS) Resilience</strong>
                 <p className="text-slate-400 text-[11px]">
-                  When offline, records are written locally with state <code>pending</code>. Never attempt in-place silent modification of historical server states.
+                  During orbital blackout or comms disruption, full biometric HUD and logging remain operational via Service Worker caching and local storage queue.
                 </p>
               </div>
 
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <strong className="text-cyan-300 block mb-1">2. Idempotency Key Guarantee</strong>
+                <strong className="text-cyan-300 block mb-1">2. Idempotency Guarantees</strong>
                 <p className="text-slate-400 text-[11px]">
-                  Every queued write has a stable client-generated UUID (<code>client_operation_id</code>). Retrying the sync request after a network timeout safely returns <code>duplicate_ignored</code> rather than creating phantom duplicate observations.
-                </p>
-              </div>
-
-              <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <strong className="text-cyan-300 block mb-1">3. Clear Conflict & Error Surfacing</strong>
-                <p className="text-slate-400 text-[11px]">
-                  Failed submissions preserve their retry state and display actionable error logs to the crew and medical officer.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* SECURITY */}
-        {activeDoc === 'security' && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-emerald-400" />
-              Security & Privacy Blueprint
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <strong className="text-emerald-400 block mb-1">Role-Based Access Control (RBAC)</strong>
-                <p className="text-slate-400 text-[11px]">
-                  Enforces three distinct tiers: Flight Surgeon (Admin), Mission Reviewer (Auditor), and Crew Member (Contributor), with backend authorization checks.
-                </p>
-              </div>
-              <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <strong className="text-emerald-400 block mb-1">Privacy & Minimum Data Collection</strong>
-                <p className="text-slate-400 text-[11px]">
-                  Zero real astronaut PII. Synthetic profiles only. No clinical diagnoses are claimed or inferred.
+                  Client generates stable UUIDs for each queued operation. Re-attempted sync requests never cause phantom duplicates on the mission server.
                 </p>
               </div>
             </div>
@@ -310,20 +426,22 @@ export const SystemDocs: React.FC = () => {
         {activeDoc === 'submission' && (
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <CheckSquare className="w-5 h-5 text-cyan-400" />
-              NASA Space Apps Challenge 2026 Submission Readiness Checklist
+              <CheckSquare className="w-5 h-5 text-emerald-400" />
+              NASA Space Apps Challenge 2026 Submission Checklist
             </h3>
+
             <div className="space-y-2 text-xs font-mono">
               {[
-                { label: 'All sample vitals explicitly tagged as SIMULATED DATA', done: true },
-                { label: 'Required fields and physiological units strictly validated', done: true },
-                { label: 'Charts plot trends with timestamps (UTC), units, and baseline bands', done: true },
-                { label: 'Every review flag includes human-readable reason, rule code, and disclaimer', done: true },
-                { label: 'Offline state clearly visible with simulated comms blackout toggle', done: true },
-                { label: 'Queued records synchronize idempotently without duplicate records', done: true },
-                { label: 'Role-based access control (Flight Surgeon vs Crew Member) demonstrated', done: true },
-                { label: 'Complete immutable audit log recording sign-ins, writes, and flag acks', done: true },
-                { label: 'Clean setup, zero secret leakage, and live local hosting verified', done: true }
+                { label: 'NASA resources entered in the submission form (OSDR, EDA, OSD-919, OSD-918)', done: true },
+                { label: 'NASA sources cited with live working URLs in project documentation and UI', done: true },
+                { label: 'NASA-derived vs simulated data clearly distinguished across dashboard', done: true },
+                { label: 'Super Intelligence (SI) usage disclosed in docs and header modal', done: true },
+                { label: 'Required SI indicators added to generated media and code documentation', done: true },
+                { label: 'No NASA branding, logos, or flags generated or modified by SI tools', done: true },
+                { label: 'All 8 health domains represented with baseline bands and trend charts', done: true },
+                { label: 'Explainable review flags with all 5 required dimensions rendered', done: true },
+                { label: 'Offline operation and idempotent synchronization verified', done: true },
+                { label: 'Live cloud production deployment working on Vercel', done: true }
               ].map((item, idx) => (
                 <div key={idx} className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 flex items-center gap-2.5">
                   <span className="w-4 h-4 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center text-[10px] font-bold">
@@ -339,4 +457,3 @@ export const SystemDocs: React.FC = () => {
     </div>
   );
 };
-

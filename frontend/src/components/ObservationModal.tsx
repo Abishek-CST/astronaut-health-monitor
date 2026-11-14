@@ -45,8 +45,12 @@ export const ObservationModal: React.FC<ObservationModalProps> = ({
     core_temp: { unit: '°C', defaultVal: '36.8', min: 34.0, max: 42.0 },
     respiration_rate: { unit: 'brpm', defaultVal: '14', min: 5, max: 45 },
     sleep_duration: { unit: 'hrs', defaultVal: '7.5', min: 0, max: 24 },
-    radiation_dose: { unit: 'mSv/day', defaultVal: '0.45', min: 0, max: 10 },
+    cabin_radiation_flux: { unit: 'μSv/h', defaultVal: '21.5', min: 0, max: 500 },
     stress_index: { unit: 'pts', defaultVal: '30', min: 0, max: 100 },
+    bone_resorption_marker: { unit: 'nmol BCE', defaultVal: '48.0', min: 10, max: 200 },
+    cabin_co2_ppm: { unit: 'ppm', defaultVal: '2600', min: 400, max: 10000 },
+    vestibular_score: { unit: '/100', defaultVal: '92', min: 0, max: 100 },
+    immune_cytokine_index: { unit: 'pg/mL', defaultVal: '4.2', min: 0, max: 50 },
   };
 
   const handleMetricChange = (newMetric: MeasurementType) => {
@@ -164,8 +168,12 @@ export const ObservationModal: React.FC<ObservationModalProps> = ({
                 <option value="spo2">Oxygen SpO₂ (%)</option>
                 <option value="core_temp">Core Body Temp (°C)</option>
                 <option value="respiration_rate">Respiration Rate (brpm)</option>
+                <option value="bone_resorption_marker">Bone Resorption NTx (OSD-919)</option>
                 <option value="sleep_duration">Sleep Duration (hrs)</option>
-                <option value="radiation_dose">Radiation (mSv/day)</option>
+                <option value="cabin_radiation_flux">Radiation Flux (NASA EDA)</option>
+                <option value="cabin_co2_ppm">Cabin CO2 (NASA EDA)</option>
+                <option value="vestibular_score">Vestibular G-Score (/100)</option>
+                <option value="immune_cytokine_index">Immune Cytokines (OSD-918)</option>
                 <option value="stress_index">Cognitive Stress (pts)</option>
               </select>
             </div>
